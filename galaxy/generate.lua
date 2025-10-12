@@ -92,27 +92,35 @@ function module.orionArm(n)
 	return results
 end
 
-function module.galacticCenter(n)
+function module.disk(n)
+	local results = {}
+	for i = 1, math.floor(n * data.disk) do
+		results[i] = data.diskCF * randomPointInEllipsoid(data.diskSize, 3)
+	end
+	return results
+end
+
+function module.center(n)
 	local results = {}
 	local bn = math.floor(n * data.bar)
 	for i = 1, bn do
-		results[i] = (data.longBarCF * randomPointInEllipsoid(data.longBarSize, 3))
+		results[i] = data.longBarCF * randomPointInEllipsoid(data.longBarSize, 3)
 	end
 	local p
 	for j = 1, math.floor(n * data.bulge) do
 		--repeat
 		p = randomPointInEllipsoid(data.centerBulgeSize, 2)
 		--until (not isPointInEllipsoid(data.longBarSize, p))
-		results[bn + j] = (data.centerBulgeCF * p)
+		results[bn + j] = data.centerBulgeCF * p
 	end
 	return results
 end
 
-function module.globularClusters(n)
+function module.globular(n)
 	local results = {}
 	local gclusterstarpool = math.floor(n * data.globular)
 	local starsThisCluster
-	while (gclusterstarpool > 0) do	
+	while (gclusterstarpool > 0) do
 		starsThisCluster = math.min(gclusterstarpool, math.floor(data.globular * n / data.numberOfClusters * (0.75 + math.random() * 0.5)))
 		gclusterstarpool = gclusterstarpool - starsThisCluster
 

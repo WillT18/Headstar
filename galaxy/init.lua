@@ -7,7 +7,7 @@ galaxy.cframe = require(galaxy.path .. "/cframe")
 galaxy.data = require(galaxy.path .. "/data")
 galaxy.arms = require(galaxy.path .. "/arms")
 galaxy.generate = require(galaxy.path .. "/generate")
---galaxy.distribution = require(galaxy.path .. "/distribution")
+galaxy.settle = require(galaxy.path .. "/settle")
 
 local galaxy = galaxy
 _G.galaxy = nil
