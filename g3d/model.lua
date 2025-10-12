@@ -57,6 +57,10 @@ local function newModel(verts, texture, translation, rotation, scale)
     return self
 end
 
+function model:clone()
+    return newModel(self.verts, self.texture, self.translation, self.rotation, self.scale)
+end
+
 -- populate model's normals in model's mesh automatically
 -- if true is passed in, then the normals are all flipped
 function model:makeNormals(isFlipped)

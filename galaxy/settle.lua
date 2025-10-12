@@ -1,4 +1,6 @@
 local Vector3 = galaxy.vector3
+local g3d = require("g3d")
+
 local limit = 0.001
 local ec = 0.01
 local dt = 0.01
@@ -57,7 +59,16 @@ return function(stars)
 	local t0 = os.time()
 	for i = 1, #stars do
 		for j = i + 1, #stars do
-			dist = (stars[i] - stars[j]).magnitude
+			dist = g3d.vectors.magnitude(g3d.vectors.subtract(
+				stars[i].translation[1],
+				stars[i].translation[2],
+				stars[i].translation[3],
+
+				stars[j].translation[1],
+				stars[j].translation[2],
+				stars[j].translation[3]
+			))
+			--dist = (stars[i] - stars[j]).magnitude
 			minDist = math.min(minDist, dist)
 			maxDist = math.max(maxDist, dist)
 		end

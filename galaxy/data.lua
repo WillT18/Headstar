@@ -34,7 +34,7 @@ local module = {
 
 	-- region position and sizes
 	diskCF = CFrame.new(),
-	diskSize = Vector3.new(100, 8, 100),
+	diskSize = Vector3.new(100, 2, 100),
 	haloCF = CFrame.new(),
 	haloSize = Vector3.new(80, 40, 80),
 	longBarCF = fromOrientation(0, 60, 0),
