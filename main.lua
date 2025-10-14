@@ -8,7 +8,7 @@ math.randomseed(os.time())
 
 local stars = {}
 local n = 3000
-local tetraScale = 0.1
+local tetraScale = 0.5
 
 local function rot()
 	return {
@@ -23,84 +23,84 @@ love.load = function()
 	local x, y, z, s
 	for _, p in ipairs(galaxy.generate.outerArm(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/yellow.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/yellow.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("outer", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.sagittariusArm(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("sag", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.perseusArm(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", nil, {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", nil, {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("per", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.centaurusArm(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/green.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/green.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("cent", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.orionArm(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/blue.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/blue.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("orion", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.sagdeg(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("sagdeg", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.bootdsg(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("bootes", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.lmc(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("lmc", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.smc(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("smc", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.center(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("center", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.globular(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", "assets/yellow.png", {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/yellow.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("globular", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.disk(n)) do
 		x, y, z = galaxy.data.fromV3(p)
-		s = g3d.newModel("assets/tetrahedron.obj", nil, {x, y, z}, rot(), tetraScale)
+		s = g3d.newModel("assets/tetrahedron.obj", nil, {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("disk", #stars - c)
@@ -152,6 +152,7 @@ love.draw = function()
 	local d
 
 	local windowSize = math.min(love.graphics.getDimensions()) / 2
+	local windowDistance = windowSize / math.tan(g3d.camera.fov / 2)
 	for i, star in ipairs(stars) do
 		d = g3d.vectors.magnitude(g3d.vectors.subtract(
 			star.translation[1],
@@ -161,8 +162,7 @@ love.draw = function()
 			g3d.camera.position[2],
 			g3d.camera.position[3]
 		))
-		--star:setScale(math.max(0.001, math.min(d / 500, 0.1)))
-		star:setScale(d / windowSize)
+		star:setScale(d * tetraScale / windowDistance)
 		star:setRotation(unpack(rot()))
 		star:draw()
 	end
