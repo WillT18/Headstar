@@ -1,5 +1,5 @@
 local Vector3 = galaxy.vector3
-local g3d = require("g3d")
+--local g3d = require("g3d")
 
 local limit = 0.001
 local ec = 0.01

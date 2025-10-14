@@ -1,7 +1,8 @@
 print(_VERSION)
 
-local g3d = require("g3d")
+g3d = require("g3d")
 local galaxy = require("galaxy")
+local jetcam = require("jetcam")
 
 math.randomseed(os.time())
 
@@ -126,6 +127,12 @@ love.load = function()
 	--local cameraLook = galaxy.vector3.new(0, 0, 0)
 	--local vx, vy, vz = galaxy.data.fromV3(cameraLook)
 	--g3d.camera.lookAt(px, py, pz, vx, vy, vz)
+	local cameraP = galaxy.data.bootesCF.p
+	local px, py, pz = galaxy.data.fromV3(cameraP)
+	local cameraTarg = galaxy.data.diskCF.p
+	local vx, vy, vz = galaxy.data.fromV3(cameraTarg)
+	--g3d.camera.lookAt(px, py, pz, vx, vy, vz)
+	jetcam.move(galaxy.cframe.lookAt(cameraP, cameraTarg))
 	print(#stars)
 	galaxy.settle(stars)
 	--th1 = g3d.newModel("assets/tetrahedron.obj", "assets/yellow.png", {0, 0, 40}, nil, 0.5)
@@ -134,7 +141,8 @@ end
 local angle = 0
 local lastDt = 0
 love.update = function(dt)
-	g3d.camera.firstPersonMovement(dt)
+	--g3d.camera.firstPersonMovement(dt)
+	jetcam.update(dt)
 	lastDt = dt
 end
 
@@ -142,6 +150,8 @@ love.draw = function()
 
 	local cv = galaxy.data.toV3(unpack(g3d.camera.position))
 	local d
+
+	local windowSize = math.min(love.graphics.getDimensions()) / 2
 	for i, star in ipairs(stars) do
 		d = g3d.vectors.magnitude(g3d.vectors.subtract(
 			star.translation[1],
@@ -151,7 +161,9 @@ love.draw = function()
 			g3d.camera.position[2],
 			g3d.camera.position[3]
 		))
-		star:setScale(math.max(0.001, math.min(d / 500, 0.1)))
+		--star:setScale(math.max(0.001, math.min(d / 500, 0.1)))
+		star:setScale(d / windowSize)
+		star:setRotation(unpack(rot()))
 		star:draw()
 	end
 	love.graphics.print(math.floor(1 / lastDt * 1000) / 1000 .. " fps")
@@ -160,7 +172,7 @@ love.draw = function()
 end
 
 love.mousemoved = function(x, y, dx, dy)
-	g3d.camera.firstPersonLook(dx,dy)
+	--g3d.camera.firstPersonLook(dx,dy)
 end
 
 love.keypressed = function(key)
