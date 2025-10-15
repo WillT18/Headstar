@@ -9,12 +9,13 @@ math.randomseed(os.time())
 local stars = {}
 local n = 3000
 local tetraScale = 0.5
+math.pi2 = math.pi * 2
 
 local function rot()
 	return {
-		math.random() * 2 * math.pi,
-		math.random() * 2 * math.pi,
-		math.random() * 2 * math.pi
+		math.random() * math.pi2,
+		math.random() * math.pi2,
+		math.random() * math.pi2
 	}
 end
 
@@ -122,32 +123,22 @@ love.load = function()
 	end
 ]]
 
-	--local cameraP = galaxy.vector3.new(50, 20, 0)
-	--local px, py, pz = galaxy.data.fromV3(cameraP)
-	--local cameraLook = galaxy.vector3.new(0, 0, 0)
-	--local vx, vy, vz = galaxy.data.fromV3(cameraLook)
-	--g3d.camera.lookAt(px, py, pz, vx, vy, vz)
 	local cameraP = galaxy.data.bootesCF.p
-	local px, py, pz = galaxy.data.fromV3(cameraP)
 	local cameraTarg = galaxy.data.diskCF.p
-	local vx, vy, vz = galaxy.data.fromV3(cameraTarg)
-	--g3d.camera.lookAt(px, py, pz, vx, vy, vz)
-	jetcam.move(galaxy.cframe.lookAt(cameraP, cameraTarg))
+	--jetcam.move(galaxy.cframe.lookAt(cameraP, cameraTarg))
 	print(#stars)
 	galaxy.settle(stars)
-	--th1 = g3d.newModel("assets/tetrahedron.obj", "assets/yellow.png", {0, 0, 40}, nil, 0.5)
-	--th2 = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {0, 1, 40}, nil, 0.5)
 end
 local angle = 0
 local lastDt = 0
 love.update = function(dt)
-	--g3d.camera.firstPersonMovement(dt)
-	jetcam.update(dt)
+	g3d.camera.firstPersonMovement(dt)
+	--jetcam.update(dt)
 	lastDt = dt
 end
 
 love.draw = function()
-
+	love.graphics.setColor(1, 1, 1)
 	local cv = galaxy.data.toV3(unpack(g3d.camera.position))
 	local d
 
@@ -172,7 +163,7 @@ love.draw = function()
 end
 
 love.mousemoved = function(x, y, dx, dy)
-	--g3d.camera.firstPersonLook(dx,dy)
+	g3d.camera.firstPersonLook(dx,dy)
 end
 
 love.keypressed = function(key)

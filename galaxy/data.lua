@@ -25,7 +25,7 @@ local function fromV3(v)
 end
 
 local module = {
-	
+
 	-- static functions
 	fromOrientation = fromOrientation,
 	sign = sign,
@@ -43,7 +43,7 @@ local module = {
 	shortBarSize = Vector3.new(4, 1, 10),
 	centerBulgeCF = CFrame.new(),
 	centerBulgeSize = Vector3.new(24, 16, 24),
-	sagdegCF = fromOrientation(0, -20, 15) + Vector3.new(-31, -28, -13),
+	sagdegCF = fromOrientation(0, -20, 15) + Vector3.new(-31, -35, -13),
 	sagdegSize = Vector3.new(4, 12, 8),
 	bootesCF = fromOrientation(60, 0, -60) + Vector3.new(-50, 50, 100),
 	bootesSize = Vector3.new(4, 8, 4),
@@ -70,11 +70,11 @@ local module = {
 	outerarm = 0.16, -- x1
 	minorarm = 0.04,
 	bulge = 0.1,
-	disk = 0.1,
+	disk = 0,
 	bar = 0.1,
 	smc = 0.01,
 	lmc = 0.05,
-	sagdeg = 0.01,
+	sagdeg = 0.02,
 	bootdsg = 0.005,
 	globular = 0.05,
 	numberOfClusters = math.random(20, 30)

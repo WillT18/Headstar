@@ -20,7 +20,7 @@ local jetcam = {
 	translateSpeed = 10,
 	pitchSpeed = math.pi / 2,
 	yawSpeed = math.pi / 2,
-	rollSpeed = math.pi
+	rollSpeed = math.pi / 2
 }
 
 local function fromV3(v)
