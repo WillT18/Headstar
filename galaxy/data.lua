@@ -24,6 +24,21 @@ local function fromV3(v)
 	return v.z, v.x, v.y
 end
 
+local function toCF(t, r)
+
+end
+
+local function fromCF(cf)
+	local t = {cf.p.z, cf.p.x, cf.p.y}
+	
+	local lv = cf.lookkVector
+	local rv = cf.rightVector
+	local uv = cf.upVector
+
+	local r = {0, 0, 0}
+	return t, r
+end
+
 local module = {
 
 	-- static functions
@@ -31,6 +46,7 @@ local module = {
 	sign = sign,
 	toV3 = toV3,
 	fromV3 = fromV3,
+	fromCF = fromCF,
 
 	-- region position and sizes
 	diskCF = CFrame.new(),
