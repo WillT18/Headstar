@@ -24,19 +24,14 @@ local function fromV3(v)
 	return v.z, v.x, v.y
 end
 
-local function toCF(t, r)
-
-end
-
-local function fromCF(cf)
-	local t = {cf.p.z, cf.p.x, cf.p.y}
-	
-	local lv = cf.lookkVector
-	local rv = cf.rightVector
-	local uv = cf.upVector
-
-	local r = {0, 0, 0}
-	return t, r
+local function fromCF(cf, scale)
+	local p = {fromV3(cf.p)}
+	local targ = {fromV3(cf.p + cf.lookVector)}
+	local up = {fromV3(cf.upVector)}
+	local matrix = require(g3d.path .. "/matrices")()
+	local scale = (scale == nil) and {1, 1, 1} or ((type(scale) == "number") and {scale, scale, scale} or scale)
+	matrix:lookAtFrom(p, targ, up, scale)
+	return matrix
 end
 
 local module = {

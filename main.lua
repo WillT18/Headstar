@@ -4,11 +4,14 @@ g3d = require("g3d")
 local galaxy = require("galaxy")
 local jetcam = require("jetcam")
 
+local Vector3 = galaxy.vector3
+local CFrame = galaxy.cframe
+
 math.randomseed(os.time())
 
 local v3s = {}
 local stars = {}
-local n = 1000
+local n = 200
 local tetraScale = 0.5
 math.pi2 = math.pi * 2
 local mapScale = 1
@@ -22,12 +25,25 @@ local function rot()
 	}
 end
 
-local ship
+local ship, shipf, shipu
+local shipCF
+local shipR = 0.25 * math.pi
+
+local mx, my, mz
+
 
 love.load = function()
-	ship = g3d.newModel("assets/814.obj", nil, {galaxy.data.fromV3(galaxy.vector3.new(10, 10, 10))}, nil, 0.1)
-	ship:setRotation(math.pi / 2, 0, 0)
-	--ship.matrix:setViewMatrix({0, 0, 10}, {galaxy.data.fromV3(galaxy.data.lmcCF.p)}, {0, 0, 1})
+	ship = g3d.newModel("assets/marker_2.obj", "assets/white.png", {10, 10, 10}, nil, 0.1)
+	shipCF = CFrame.new(10, 10, 10)--CFrame.new(Vector3.new(10, 10, 10), galaxy.data.bootesCF.p)
+	--ship.matrix:transformFromView(eye, targ, upV, ship.scale)
+	--ship.matrix:setTransformationMatrix(eye, {0, 0, 0}, ship.scale)
+	ship.matrix = galaxy.data.fromCF(shipCF, ship.scale)
+	print(shipCF)
+	print(ship.matrix)
+	mx = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", nil, nil, 0.25)
+	my = g3d.newModel("assets/tetrahedron.obj", "assets/green.png", nil, nil, 0.25)
+	mz = g3d.newModel("assets/tetrahedron.obj", "assets/blue.png", nil, nil, 0.25)
+
 	--ship:setScale(0.1)
 	local c = 0
 	local x, y, z, s
@@ -152,15 +168,34 @@ love.load = function()
 end
 local angle = 0
 local lastDt = 0
+local t = 0
 love.update = function(dt)
+	--t = t + dt
 	g3d.camera.firstPersonMovement(dt)
 	--jetcam.update(dt)
+	if (t == 1) then
+		shipCF = shipCF * CFrame.angles(dt * shipR, 0, 0)
+	elseif (t == 2) then
+		shipCF = shipCF * CFrame.angles(0, dt * shipR, 0)
+	elseif (t == 3) then
+		shipCF = shipCF * CFrame.angles(0, 0, dt * shipR)
+	elseif (t == -1) then
+		shipCF = CFrame.new(shipCF.p)
+		t = 0
+	end
+	ship.matrix = galaxy.data.fromCF(shipCF, ship.scale)
+	mx:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(2, 0, 0)).p))
+	my:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(0, 2, 0)).p))
+	mz:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(0, 0, 2)).p))
 	lastDt = dt
 end
 
 love.draw = function()
 	love.graphics.setColor(0.356863, 0.364706, 0.411765)
 	ship:draw()
+	mx:draw()
+	my:draw()
+	mz:draw()
 	love.graphics.setColor(1, 1, 1)
 	local cv = galaxy.data.toV3(unpack(g3d.camera.position))
 	local d
@@ -168,20 +203,8 @@ love.draw = function()
 	local windowSize = math.min(love.graphics.getDimensions()) / 2
 	local windowDistance = windowSize / math.tan(g3d.camera.fov / 2)
 	for i, star in ipairs(stars) do
-		m = (v3s[i] - cv).magnitude
-		if (m < maxDist) then
-			--if (not star.inside) then
-				star:setTranslation(galaxy.data.fromV3(v3s[i]))
-				star.inside = true
-				star.mesh:setTexture(star.texture)
-			--end
-		else
-			--if (star.inside or star.inside == nil) then
-				star:setTranslation(galaxy.data.fromV3(cv + (v3s[i] - cv).unit * maxDist))
-				star.inside = false
-				star.mesh:setTexture(nil)
-			--end
-		end
+		--m = v3s[i] - cv
+		--star:setTranslation(galaxy.data.fromV3(cv + m.unit * 1))
 		d = g3d.vectors.magnitude(g3d.vectors.subtract(
 			star.translation[1],
 			star.translation[2],
@@ -191,7 +214,12 @@ love.draw = function()
 			g3d.camera.position[3]
 		))
 		star:setScale(d * tetraScale / windowDistance)
-		star:setRotation(unpack(rot()))
+		if (star.rtimer == nil or star.rtimer <= 0) then
+			star:setRotation(unpack(rot()))
+			star.rtimer = math.random(1, 10)
+		else
+			star.rtimer = star.rtimer - 1
+		end
 		star:draw()
 	end
 	love.graphics.print(
@@ -220,6 +248,16 @@ end
 love.keypressed = function(key)
 	if (key == "escape") then
 		love.event.quit()
+	elseif (key == "x") then
+		t = 1
+	elseif (key == "y") then
+		t = 2
+	elseif (key == "z") then
+		t = 3
+	elseif (key == "e") then
+		t = 0
+	elseif (key == "r") then
+		t = -1
 	end
 end
 
