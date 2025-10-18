@@ -2,11 +2,11 @@
 -- september 2021
 -- MIT license
 
-local newMatrix = require(g3d.path .. "/matrices")
-local loadObjFile = require(g3d.path .. "/objloader")
-local collisions = require(g3d.path .. "/collisions")
-local vectors = require(g3d.path .. "/vectors")
-local camera = require(g3d.path .. "/camera")
+local newMatrix = require(g3d.path .. ".matrices")
+local loadObjFile = require(g3d.path .. ".objloader")
+local collisions = require(g3d.path .. ".collisions")
+local vectors = require(g3d.path .. ".vectors")
+local camera = require(g3d.path .. ".camera")
 local vectorCrossProduct = vectors.crossProduct
 local vectorNormalize = vectors.normalize
 
@@ -55,10 +55,6 @@ local function newModel(verts, texture, translation, rotation, scale)
     self:setTransform(translation or {0,0,0}, rotation or {0,0,0}, scale or {1,1,1})
 
     return self
-end
-
-function model:clone()
-    return newModel(self.verts, self.texture, self.translation, self.rotation, self.scale)
 end
 
 -- populate model's normals in model's mesh automatically
@@ -143,6 +139,20 @@ end
 function model:updateMatrix()
     self.matrix:setTransformationMatrix(self.translation, self.rotation, self.scale)
 end
+
+-- align's the model matrix to a given point
+-- up vector is assumed to be normalized
+function model:lookAtFrom(pos, target, up)
+    local pos = pos or self.translation
+    self.matrix:lookAtFrom(pos, target, up or {0,0,1}, self.scale)
+end
+
+function model:lookAt(target, up)
+    self.matrix:lookAtFrom(self.translation, target, up or {0,0,1}, self.scale)
+end
+
+
+
 
 -- draw the model
 function model:draw(shader)
