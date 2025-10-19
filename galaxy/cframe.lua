@@ -398,28 +398,38 @@ function cframe.new(...)
 	return setmetatable(self, mt)
 end
 
-function cframe.lookAt(eye, look)
+function cframe.lookAt(eye, look, up)
+	up = (up ~= nil) and up or top
+
 	local eyeIsVector = type(eye) == "table" and eye.__type and eye.__type == "vector3"
 	local lookIsVector = type(look) == "table" and look.__type and look.__type == "vector3"
+	local upIsVector = type(up) == "table" and up.__type and up.__type == "vector3"
 	local t = type(eye)
 	local cust = t == "table" and eye.__type or t
 	assert(eyeIsVector, "bad argument #1 to 'lookAt' (Vector3 expected, got " .. cust .. ")")
 	t = type(look)
 	cust = t == "table" and look.__type or t
 	assert(lookIsVector, "bad argument #2 to 'lookAt' (Vector3 expected, got " .. cust .. ")")
-	return cframe.new(eye, look)
+	t = type(up)
+	cust = t == "table" and up.__type or t
+	assert(upIsVector, "bad argument #3 to 'lookAt' (Vector3 expected, got " .. cust .. ")")
+
+	local zaxis = (eye - look).unit
+	local xaxis = up:Cross(zaxis).unit
+	local yaxis = zaxis:Cross(xaxis).unit
+	if (xaxis.magnitude == 0) then
+		return cframe.new(eye, look) -- default to Y axis
+	end
+	return cframe.new(
+		eye.x, eye.y, eye.z,
+		xaxis.x, yaxis.x, zaxis.x,
+		xaxis.y, yaxis.y, zaxis.y,
+		xaxis.z, yaxis.z, zaxis.z
+	)
 end
 
-function cframe.lookAlong(eye, look)
-	local eyeIsVector = type(eye) == "table" and eye.__type and eye.__type == "vector3"
-	local lookIsVector = type(look) == "table" and look.__type and look.__type == "vector3"
-	local t = type(eye)
-	local cust = t == "table" and eye.__type or t
-	assert(eyeIsVector, "bad argument #1 to 'lookAlong' (Vector3 expected, got " .. cust .. ")")
-	t = type(look)
-	cust = t == "table" and look.__type or t
-	assert(lookIsVector, "bad argument #2 to 'lookAlong' (Vector3 expected, got " .. cust .. ")")
-	return cframe.new(eye, eye + look)
+function cframe.lookAlong(eye, look, up)
+	return cframe.lookAt(eye, eye + look, up)
 end
 
 function cframe.fromAxisAngle(axis, theta)
@@ -527,7 +537,11 @@ function cframe:AngleBetween(other)
 end
 
 function cframe:FuzzyEq(other, epsilon)
-	return self == other or (self.p:FuzzyEq(other.p, epsilon) and self:AngleBetween(other) <= math.sqrt(epsilon or 1e-5))
+	local angleZ = self.lookVector:Angle(other.lookVector)
+	local angleY = self.upVector:Angle(other.upVector)
+	return self == other or (self.p:FuzzyEq(other.p, epsilon)
+		and angleZ <= math.sqrt(epsilon or 1e-5)
+		and angleY <= math.sqrt(epsilon or 1e-5))
 end
 
 return cframe

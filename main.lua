@@ -11,8 +11,8 @@ math.randomseed(os.time())
 
 local v3s = {}
 local stars = {}
-local n = 200
-local tetraScale = 0.5
+local n = 3000
+local tetraScale = 1--0.5
 math.pi2 = math.pi * 2
 local mapScale = 1
 local maxDist = g3d.camera.farClip - 800 -- distance threshold where we pin a star to a set distance from the camera
@@ -31,15 +31,20 @@ local shipR = 0.25 * math.pi
 
 local mx, my, mz
 
+-- correct the camera view if the window size changes
+love.resize = function()
+	g3d.camera.aspectRatio = love.graphics.getWidth()/love.graphics.getHeight()
+	g3d.camera.updateProjectionMatrix()
+	g3d.camera.updateViewMatrix()
+end
 
 love.load = function()
-	ship = g3d.newModel("assets/marker_2.obj", "assets/white.png", {10, 10, 10}, nil, 0.1)
-	shipCF = CFrame.new(10, 10, 10)--CFrame.new(Vector3.new(10, 10, 10), galaxy.data.bootesCF.p)
-	--ship.matrix:transformFromView(eye, targ, upV, ship.scale)
-	--ship.matrix:setTransformationMatrix(eye, {0, 0, 0}, ship.scale)
-	ship.matrix = galaxy.data.fromCF(shipCF, ship.scale)
+	ship = g3d.newModel("assets/814_rotated_3.obj", "assets/white.png", {10, 10, 10}, nil, 0.1)
+	shipCF = CFrame.new(Vector3.new(10, 10, 10), galaxy.data.bootesCF.p)
 	print(shipCF)
-	print(ship.matrix)
+	galaxy.data.setModelCFrame(ship, shipCF)
+	local cf2 = galaxy.data.getModelCFrame2(ship)
+	print(cf2)
 	mx = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", nil, nil, 0.25)
 	my = g3d.newModel("assets/tetrahedron.obj", "assets/green.png", nil, nil, 0.25)
 	mz = g3d.newModel("assets/tetrahedron.obj", "assets/blue.png", nil, nil, 0.25)
@@ -164,11 +169,11 @@ love.load = function()
 	local cameraTarg = galaxy.data.diskCF.p
 	--jetcam.move(galaxy.cframe.lookAt(cameraP, cameraTarg))
 	print(#stars)
-	galaxy.settle(stars)
+	--galaxy.settle(stars)
 end
 local angle = 0
 local lastDt = 0
-local t = 0
+local t = -1
 love.update = function(dt)
 	--t = t + dt
 	g3d.camera.firstPersonMovement(dt)
@@ -183,10 +188,14 @@ love.update = function(dt)
 		shipCF = CFrame.new(shipCF.p)
 		t = 0
 	end
-	ship.matrix = galaxy.data.fromCF(shipCF, ship.scale)
+	galaxy.data.setModelCFrame(ship, shipCF)
+	--galaxy.data.setModelCFrame(ship, CFrame.lookAt2(Vector3.new(10, 10, 10), galaxy.data.bootesCF.p, (galaxy.data.bootesCF.p - Vector3.new(10, 10, 10)).unit))
 	mx:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(2, 0, 0)).p))
 	my:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(0, 2, 0)).p))
 	mz:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(0, 0, 2)).p))
+
+	--galaxy.data.setCameraCFrame(shipCF * CFrame.new(0, 3, 6))
+
 	lastDt = dt
 end
 
@@ -216,7 +225,7 @@ love.draw = function()
 		star:setScale(d * tetraScale / windowDistance)
 		if (star.rtimer == nil or star.rtimer <= 0) then
 			star:setRotation(unpack(rot()))
-			star.rtimer = math.random(1, 10)
+			star.rtimer = math.random(1, 100)
 		else
 			star.rtimer = star.rtimer - 1
 		end

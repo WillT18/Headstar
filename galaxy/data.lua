@@ -24,14 +24,27 @@ local function fromV3(v)
 	return v.z, v.x, v.y
 end
 
-local function fromCF(cf, scale)
-	local p = {fromV3(cf.p)}
-	local targ = {fromV3(cf.p + cf.lookVector)}
-	local up = {fromV3(cf.upVector)}
-	local matrix = require(g3d.path .. "/matrices")()
-	local scale = (scale == nil) and {1, 1, 1} or ((type(scale) == "number") and {scale, scale, scale} or scale)
-	matrix:lookAtFrom(p, targ, up, scale)
-	return matrix
+local function setModelCFrame(model, cf)
+	model:lookAtFrom(
+		{fromV3(cf.p)},
+		{fromV3(cf.p + cf.lookVector)},
+		{fromV3(cf.upVector)}
+	)
+end
+
+local function getModelCFrame(model)
+	local translation = toV3(model.matrix[4], model.matrix[8], model.matrix[12])
+	local scale = toV3(model.matrix:getScale())
+	local forward = toV3(model.matrix[1], model.matrix[5], model.matrix[9]) / scale
+	local up = toV3(model.matrix[3], model.matrix[7], model.matrix[11]) / scale
+	return CFrame.lookAt(translation, translation - forward, up)
+end
+
+local function setCameraCFrame(cf)
+	g3d.camera.position = {fromV3(cf.p)}
+	g3d.camera.target = {fromV3(cf.p + cf.lookVector)}
+	g3d.camera.up = {fromV3(cf.upVector)}
+	g3d.camera.updateViewMatrix()
 end
 
 local module = {
@@ -41,7 +54,9 @@ local module = {
 	sign = sign,
 	toV3 = toV3,
 	fromV3 = fromV3,
-	fromCF = fromCF,
+	setCameraCFrame = setCameraCFrame,
+	setModelCFrame = setModelCFrame,
+	getModelCFrame = getModelCFrame,
 
 	-- region position and sizes
 	diskCF = CFrame.new(),
