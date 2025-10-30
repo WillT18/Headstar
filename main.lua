@@ -11,7 +11,7 @@ math.randomseed(os.time())
 
 local v3s = {}
 local stars = {}
-local n = 3000
+local n = 2000
 local tetraScale = 1--0.5
 math.pi2 = math.pi * 2
 local mapScale = 1
@@ -30,6 +30,7 @@ local shipCF
 local shipR = 0.25 * math.pi
 
 local mx, my, mz
+local rx, ry, rz
 
 -- correct the camera view if the window size changes
 love.resize = function()
@@ -39,17 +40,21 @@ love.resize = function()
 end
 
 love.load = function()
-	ship = g3d.newModel("assets/814_rotated_3.obj", "assets/white.png", {10, 10, 10}, nil, 0.1)
+	ship = g3d.newModel("assets/814_rotated_3.obj", nil, {10, 10, 10}, nil, 0.1)
 	shipCF = CFrame.new(Vector3.new(10, 10, 10), galaxy.data.bootesCF.p)
 	print(shipCF)
 	galaxy.data.setModelCFrame(ship, shipCF)
-	local cf2 = galaxy.data.getModelCFrame2(ship)
+	local cf2 = galaxy.data.getModelCFrame(ship)
 	print(cf2)
 	mx = g3d.newModel("assets/tetrahedron.obj", "assets/red.png", nil, nil, 0.25)
 	my = g3d.newModel("assets/tetrahedron.obj", "assets/green.png", nil, nil, 0.25)
 	mz = g3d.newModel("assets/tetrahedron.obj", "assets/blue.png", nil, nil, 0.25)
 
 	--ship:setScale(0.1)
+	shipf = g3d.newModel("assets/gemini.obj", nil, nil, nil, 0.1)
+	shipu = CFrame.new(0, 0, 1) * CFrame.angles(unpack(rot()))
+	galaxy.data.setModelCFrame(shipf, shipu)
+	--galaxy.data.setModelCFrame(shipf, CFrame.lookAt(Vector3.new(), galaxy.data.bootesCF.p, galaxy.data.getModelCFrame(ship).p))
 	local c = 0
 	local x, y, z, s
 	for _, p in ipairs(galaxy.generate.outerArm(n)) do
@@ -195,17 +200,22 @@ love.update = function(dt)
 	mz:setTranslation(galaxy.data.fromV3((shipCF * CFrame.new(0, 0, 2)).p))
 
 	--galaxy.data.setCameraCFrame(shipCF * CFrame.new(0, 3, 6))
+	shipu = shipu * CFrame.angles(dt * shipR, dt * shipR, dt * shipR)
+	galaxy.data.setModelCFrame(shipf, shipu)
 
 	lastDt = dt
 end
 
 love.draw = function()
+	--[[
 	love.graphics.setColor(0.356863, 0.364706, 0.411765)
 	ship:draw()
+	love.graphics.setColor(1, 1, 1)
 	mx:draw()
 	my:draw()
 	mz:draw()
-	love.graphics.setColor(1, 1, 1)
+	]]
+	shipf:draw()
 	local cv = galaxy.data.toV3(unpack(g3d.camera.position))
 	local d
 	local m
@@ -225,7 +235,7 @@ love.draw = function()
 		star:setScale(d * tetraScale / windowDistance)
 		if (star.rtimer == nil or star.rtimer <= 0) then
 			star:setRotation(unpack(rot()))
-			star.rtimer = math.random(1, 100)
+			star.rtimer = math.random(1, math.ceil(1 / lastDt) * 2)
 		else
 			star.rtimer = star.rtimer - 1
 		end
