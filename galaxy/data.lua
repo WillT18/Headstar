@@ -102,8 +102,8 @@ local module = {
 	lmc = 0.05,
 	sagdeg = 0.02,
 	bootdsg = 0.005,
-	globular = 0.05,
-	numberOfClusters = math.random(10, 20)
+	globular = 0.075,
+	numberOfClusters = 30--math.random(20, 30)
 }
 
 module.longBarAxis = module.longBarSize.z / 2

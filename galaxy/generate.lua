@@ -120,11 +120,13 @@ function module.globular(n)
 	local results = {}
 	local gclusterstarpool = math.floor(n * data.globular)
 	local starsThisCluster
+	local topOrBottom = 1
 	while (gclusterstarpool > 0) do
 		starsThisCluster = math.min(gclusterstarpool, math.max(1, math.floor(data.globular * n / data.numberOfClusters * (0.75 + math.random() * 0.5))))
 		gclusterstarpool = gclusterstarpool - starsThisCluster
 		local theta = 2 * math.pi * math.random()
-		local phi = math.acos((math.random() * 0.5 + 0.5) * (-1) ^ math.random(1, 2))
+		local phi = math.acos((math.random() * 0.5 + 0.5) * (-1) ^ topOrBottom)
+		topOrBottom = topOrBottom + 1
 		local d = math.random() ^ (1 / 5)
 
 		local r = Vector3.new(
