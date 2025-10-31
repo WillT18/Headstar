@@ -71,8 +71,10 @@ local module = {
 	centerBulgeSize = Vector3.new(24, 16, 24),
 	sagdegCF = fromOrientation(0, -20, 15) + Vector3.new(-31, -35, -13),
 	sagdegSize = Vector3.new(4, 12, 8),
-	bootesCF = fromOrientation(60, 0, -60) + Vector3.new(-50, 50, 100),
-	bootesSize = Vector3.new(4, 8, 4),
+	umadsgCF = fromOrientation(60, 0, -60) + Vector3.new(0, 100, -25),--Vector3.new(-50, 50, 100),
+	umadsgSize = Vector3.new(4, 8, 4),
+	boodsgCF = CFrame.new(-50, 0, 100),
+	boodsgSize = Vector3.new(4, 4, 4),
 	lmcCF = fromOrientation(45, -30, 30) + Vector3.new(66, -31, -14),
 	lmcSize = Vector3.new(24, 8, 16),
 	smcCF = fromOrientation(-25, 85, 50) + Vector3.new(58, -53, -56),
@@ -101,7 +103,8 @@ local module = {
 	smc = 0.01,
 	lmc = 0.05,
 	sagdeg = 0.02,
-	bootdsg = 0.005,
+	boodsg = 0.005,
+	umadsg = 0.005,
 	globular = 0.075,
 	numberOfClusters = 30--math.random(20, 30)
 }
@@ -111,7 +114,7 @@ module.shortBarAxis = module.shortBarSize.z / 2
 module.orionAxis = (module.orionEnd - module.orionStart) / 2
 module.lmcAxis = Vector3.new(module.lmcSize.x / 2, module.lmcSize.z, module.lmcSize.x)
 
-local sum = module.mainarm * 3 + module.outerarm + module.minorarm + module.bulge + module.disk + module.bar + module.smc + module.lmc + module.sagdeg + module.bootdsg + module.globular
+local sum = module.mainarm * 3 + module.outerarm + module.minorarm + module.bulge + module.disk + module.bar + module.smc + module.lmc + module.sagdeg + module.boodsg + module.umadsg + module.globular
 module.mainarm = module.mainarm / sum
 module.outerarm = module.outerarm / sum
 module.minorarm = module.minorarm / sum
@@ -121,7 +124,8 @@ module.bar = module.bar / sum
 module.smc = module.smc / sum
 module.lmc = module.lmc / sum
 module.sagdeg = module.sagdeg / sum
-module.bootdsg = module.bootdsg / sum
+module.boodsg = module.boodsg / sum
+module.umadsg = module.umadsg / sum
 module.globular = module.globular / sum
 
 return module

@@ -41,7 +41,7 @@ end
 
 love.load = function()
 	ship = g3d.newModel("assets/814_rotated_3.obj", nil, {10, 10, 10}, nil, 0.1)
-	shipCF = CFrame.new(Vector3.new(10, 10, 10), galaxy.data.bootesCF.p)
+	shipCF = CFrame.new(Vector3.new(10, 10, 10), galaxy.data.boodsgCF.p)
 	print(shipCF)
 	galaxy.data.setModelCFrame(ship, shipCF)
 	local cf2 = galaxy.data.getModelCFrame(ship)
@@ -105,13 +105,21 @@ love.load = function()
 	end
 	print("sagdeg", #stars - c)
 	c = #stars
-	for _, p in ipairs(galaxy.generate.bootdsg(n)) do
+	for _, p in ipairs(galaxy.generate.boodsg(n)) do
 		table.insert(v3s, p * mapScale)
 		x, y, z = galaxy.data.fromV3(p * mapScale)
 		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot())
 		table.insert(stars, s)
 	end
 	print("bootes", #stars - c)
+	c = #stars
+	for _, p in ipairs(galaxy.generate.umadsg(n)) do
+		table.insert(v3s, p * mapScale)
+		x, y, z = galaxy.data.fromV3(p * mapScale)
+		s = g3d.newModel("assets/tetrahedron.obj", "assets/violet.png", {x, y, z}, rot())
+		table.insert(stars, s)
+	end
+	print("ursa", #stars - c)
 	c = #stars
 	for _, p in ipairs(galaxy.generate.lmc(n)) do
 		table.insert(v3s, p * mapScale)
@@ -170,7 +178,7 @@ love.load = function()
 	end
 ]]
 
-	local cameraP = galaxy.data.bootesCF.p
+	local cameraP = galaxy.data.boodsgCF.p
 	local cameraTarg = galaxy.data.diskCF.p
 	--jetcam.move(galaxy.cframe.lookAt(cameraP, cameraTarg))
 	print(#stars)

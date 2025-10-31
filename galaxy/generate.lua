@@ -187,10 +187,18 @@ function module.sagdeg(n)
 	return results
 end
 
-function module.bootdsg(n)
+function module.boodsg(n)
 	local results = {}
-	for i = 1, math.floor(n * data.bootdsg) do
-		results[i] = data.bootesCF * randomPointInEllipsoid(data.bootesSize, 1)
+	for i = 1, math.floor(n * data.boodsg) do
+		results[i] = data.boodsgCF * randomPointInEllipsoid(data.boodsgSize, 1)
+	end
+	return results
+end
+
+function module.umadsg(n)
+	local results = {}
+	for i = 1, math.floor(n * data.umadsg) do
+		results[i] = data.umadsgCF * randomPointInEllipsoid(data.umadsgSize, 1)
 	end
 	return results
 end
